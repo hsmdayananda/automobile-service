@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AutomobileEntity } from './automobile.entity';
@@ -7,6 +7,7 @@ import { BullModule } from '@nestjs/bull';
 import { AutomobileProcessor } from './automobile.processor';
 import { AutomobileService } from './automobile.service';
 import { MulterModule } from '@nestjs/platform-express';
+import { GpqlMiddleware } from './middlewares/gpql.middleware'
 
 
 @Module({
@@ -19,4 +20,10 @@ import { MulterModule } from '@nestjs/platform-express';
     controllers: [AutomobileController],
     providers: [AutomobileProcessor, AutomobileService,],
 })
-export class AutomobileModule { }
+export class AutomobileModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(GpqlMiddleware)
+            .forRoutes('/automobile/view');
+    }
+}

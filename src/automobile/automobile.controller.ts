@@ -21,7 +21,7 @@ export class AutomobileController {
 
     }
 
-    @Get()
+    @Get('hello')
     test() {
         console.log(" hello  from server")
     }
