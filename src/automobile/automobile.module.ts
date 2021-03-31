@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, HttpModule } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AutomobileEntity } from './automobile.entity';
@@ -17,7 +17,7 @@ import { AutomobileResolver } from './automobile.resolver';
         name: 'uploader',
     }), MulterModule.register({
         dest: '../data',
-    })],
+    }), HttpModule],
     controllers: [AutomobileController],
     providers: [AutomobileProcessor, AutomobileService, AutomobileResolver],
 })

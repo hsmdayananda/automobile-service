@@ -1,11 +1,10 @@
-import { Controller, Post, UploadedFile, Get, UseInterceptors } from "@nestjs/common";
+import { Controller, Post, UploadedFile, Get, UseInterceptors, Put, Delete, Param, Body, Query } from "@nestjs/common";
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { AutomobileService } from "./automobile.service";
-
-
+import { AutomobileEntity } from "./automobile.entity";
 
 
 @Controller('automobile')
@@ -21,6 +20,24 @@ export class AutomobileController {
         });
 
     }
+
+    @Get('read')
+    async readAll(@Query() query) {
+
+        console.log(' query ', query)
+        return await this.automobileService.readAll(query.page);
+    }
+    @Put('update/:id')
+    async update(@Param('id') id: number, @Body() automobileEntity: AutomobileEntity) {
+
+        return await this.automobileService.update(automobileEntity, id);
+    }
+    @Delete('delete/:id')
+    async delete(@Param('id') id: number) {
+
+        return await this.automobileService.delete(id);
+    }
+
 
     @Get('hello')
     async test() {
