@@ -3,6 +3,7 @@ import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
+import { AutomobileService } from "./automobile.service";
 
 
 
@@ -10,7 +11,7 @@ import { Queue } from "bull";
 @Controller('automobile')
 export class AutomobileController {
 
-    constructor(@InjectQueue('uploader') private readonly uploadQueue: Queue) { }
+    constructor(@InjectQueue('uploader') private readonly uploadQueue: Queue, private automobileService: AutomobileService) { }
 
     @Post('file')
     @UseInterceptors(FileInterceptor('file'))
@@ -22,7 +23,9 @@ export class AutomobileController {
     }
 
     @Get('hello')
-    test() {
+    async test() {
+
+        await this.automobileService.showAll(1);
         console.log(" hello  from server")
     }
 

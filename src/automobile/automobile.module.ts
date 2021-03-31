@@ -8,6 +8,7 @@ import { AutomobileProcessor } from './automobile.processor';
 import { AutomobileService } from './automobile.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { GpqlMiddleware } from './middlewares/gpql.middleware'
+import { AutomobileResolver } from './automobile.resolver';
 
 
 @Module({
@@ -18,7 +19,7 @@ import { GpqlMiddleware } from './middlewares/gpql.middleware'
         dest: '../data',
     })],
     controllers: [AutomobileController],
-    providers: [AutomobileProcessor, AutomobileService,],
+    providers: [AutomobileProcessor, AutomobileService, AutomobileResolver],
 })
 export class AutomobileModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

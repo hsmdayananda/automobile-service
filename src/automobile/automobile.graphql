@@ -1,0 +1,36 @@
+type Automobile {
+    id: Int!
+    car_make: String!
+    car_model: String!
+    created: String!
+    email: String!
+    first_name: String!
+    last_name: String!
+    manufactured_date: String!
+     age_of_vehicle: Int!
+    vin_number: String!
+}
+
+
+type Query {
+  automobiles(page: Int): [Automobile!]
+  automobilesSearch(matchStr: String!): [Automobile!]
+}
+
+type Mutation {
+  update(id: Int!,automobileInput: AutomobileInput!): Automobile
+  delete(id: Int!,automobileInput: AutomobileInput! ): Automobile
+}
+
+input AutomobileInput{
+    car_make: String
+    car_model: String
+    created: String
+    email: String
+    first_name: String
+    last_name: String
+    manufactured_date: String
+     age_of_vehicle: Int
+    vin_number: String
+}
+

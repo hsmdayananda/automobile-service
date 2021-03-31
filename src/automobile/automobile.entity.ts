@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column } from 'typeorm'
 
-@Entity()
+@Entity('')
 export class AutomobileEntity {
     @PrimaryGeneratedColumn('increment') id: number;
     @CreateDateColumn()

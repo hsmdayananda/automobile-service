@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { BullModule } from '@nestjs/bull';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AutomobileModule } from './automobile/automobile.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 @Module({
   imports: [BullModule.forRoot({
@@ -11,7 +13,14 @@ import { AutomobileModule } from './automobile/automobile.module';
       host: 'localhost',
       port: 6379,
     },
-  }), TypeOrmModule.forRoot(), AutomobileModule],
+  }), TypeOrmModule.forRoot(), AutomobileModule,
+  GraphQLModule.forRoot({
+    typePaths: ['./**/*.graphql'],
+    definitions: {
+      path: join(process.cwd(), 'src/graphql.ts'),
+    },
+    context: ({ req }) => ({ headers: req.headers }),
+  })],
   controllers: [AppController],
   providers: [AppService],
 })
