@@ -1,13 +1,13 @@
-import { Injectable, HttpException, HttpStatus, HttpService } from "@nestjs/common";
+import { Injectable, HttpService } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Like } from "typeorm";
+import { Repository } from "typeorm";
 import { AutomobileEntity } from "./automobile.entity";
 import { getConnection } from "typeorm";
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
-import { request, gql, GraphQLClient } from 'graphql-request'
-import { json } from "express";
-const { graphql } = require('graphql')
+import { request, gql } from 'graphql-request'
+import { doc } from "prettier";
+
 
 
 @Injectable()
@@ -113,23 +113,47 @@ export class AutomobileService {
 
     }
     async update(automobileEntityPatch: any, id_: number) {
-        let query = gql`{mutation MyMutation($automobileEntityPatch: AutomobileEntityPatch = ` + JSON.stringify(automobileEntityPatch) + `, $id: Int = ` + id_ + `  ) {\n  updateAutomobileEntityById(\n    input: {automobileEntityPatch: $automobileEntityPatch, id: ` + id_ + ` }\n  ) {\n    automobileEntity {\n      firstName\n      lastName\n    }\n  }\n}\n}`
 
-        console.log(' print ', query)
-        return request(this.url, query).then((data) => data.message
-        ).catch((e) => {
-            console.log(e)
-            return e;
-        });
 
+        let patchObj = JSON.stringify(automobileEntityPatch)
+        console.log('input ====>>>>', JSON.parse(patchObj));
+        console.log('out ====>>>>', automobileEntityPatch);
+
+        let data = {
+            query: this.toSingleLine(`mutation {
+            updateAutomobileEntityById(input: {automobileEntityPatch: { firstName: "Mandy", lastName: "Darm" }, id: ${id_}}) {
+              automobileEntity{
+                firstName
+              }
+            }
+          }`)
+        }
+            ;
+
+        console.log(" data ==>>>", data)
+        this.httpService.post(this.url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        }).toPromise().then((data) => console.log(data.data.data));
+
+    }
+
+    toSingleLine(query: string) {
+        return query.split("\n").join('');
     }
 
     async delete(id: number) {
 
-        const query = gql`mutation MyMutation { ` +
-            ` deleteAutomobileEntityById(input: {id: ` + id + ` }) {`
-            + `   clientMutationId `
-            + ` deletedAutomobileEntityId }}`
+        const query = gql`mutation MyMutation {
+    ` +
+            ` deleteAutomobileEntityById(input: { id: ` + id + ` }) {
+        `
+            + `   clientMutationId`
+            + ` deletedAutomobileEntityId
+    }
+} `
 
         return request(this.url, query).then((data) => data.message
         ).catch((e) => {

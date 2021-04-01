@@ -22,6 +22,4 @@ export class AutomobileEntity {
     @Column("int", { default: 1 })
     age_of_vehicle: number
 
-
-
 }
