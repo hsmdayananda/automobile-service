@@ -1,4 +1,4 @@
-import { Injectable, HttpService } from "@nestjs/common";
+import { Injectable, HttpService, Inject } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AutomobileEntity } from "./automobile.entity";
@@ -6,7 +6,8 @@ import { getConnection } from "typeorm";
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import { request, gql } from 'graphql-request'
-import { doc } from "prettier";
+import { GpqlServerAPI } from "./config/gpqlApi.datasource";
+
 
 
 
@@ -15,7 +16,9 @@ export class AutomobileService {
 
     url = 'http://localhost:5000/graphql';
 
-    constructor(@InjectRepository(AutomobileEntity) private autoMobileRepo: Repository<AutomobileEntity>, private httpService: HttpService) { }
+    constructor(@InjectRepository(AutomobileEntity) private autoMobileRepo: Repository<AutomobileEntity>, private httpService: HttpService,
+        private gpqlAPI: GpqlServerAPI) { }
+
     async bulkUpload(jobData: Express.Multer.File) {
         const automobiles = [];
         fs.createReadStream(jobData.path).
@@ -26,12 +29,12 @@ export class AutomobileService {
                 throw error.message;
             })
             .on('data', row => {
-                console.log("data row", row);
+                //console.log("data row", row);
                 automobiles.push(row);
             })
             .on('end', async () => {
                 // Save automobiles to PostgreSQL database
-                console.log('table data', automobiles);
+                //console.log('table data', automobiles);
                 await getConnection()
                     .createQueryBuilder()
                     .insert()
@@ -41,7 +44,10 @@ export class AutomobileService {
                         automobiles
 
                     )
-                    .execute().finally(() => console.log("job done"));
+                    .execute().finally(() => {
+                        //console.log("job done")
+
+                    });
             });
 
 
@@ -82,11 +88,29 @@ export class AutomobileService {
     // }
 
     async readAll(page: number) {
-        console.log(' read automobiles =====>>>')
+        console.log(' read all automobiles =====>>>')
         let offset: number;
         if (page == 1) {
             offset = 0 * 100
         }
+        //     const queryTpApi = `
+        //     {
+        //         allAutomobileEntities(orderBy: MANUFACTURED_DATE_ASC, first: 100,  offset:  ` + offset + ` ) {
+        //             nodes {
+        //                 ageOfVehicle
+        //                 carMake
+        //                 created
+        //                 email
+        //                 id
+        //                 lastName
+        //                 carModel
+        //                 firstName
+        //                 manufacturedDate
+        //                 vinNumber
+        //               }
+        //       }
+        //     }
+        //   `
         const query = gql`
         {
             allAutomobileEntities(orderBy: MANUFACTURED_DATE_ASC, first: 100,  offset:  ` + offset + ` ) {
@@ -104,29 +128,26 @@ export class AutomobileService {
                   }
           }
         }
-      `
+        `
 
+        // let result = this.gpqlAPI.geAllAutomobiles(queryTpApi);
         //await request(this.url, query).then((data) => console.log(data))
         let out = await request(this.url, query);
 
-        return out;
+        console.log(out)
+        return out.allAutomobileEntities.nodes;
 
     }
-    async update(automobileEntityPatch: any, id_: number) {
+    async update(id_: number, automobileEntityPatch: any) {
 
 
         let patchObj = JSON.stringify(automobileEntityPatch)
         console.log('input ====>>>>', JSON.parse(patchObj));
         console.log('out ====>>>>', automobileEntityPatch);
-
+        //{ firstName: "Mandy", lastName: "Darm" }
         let data = {
-            query: this.toSingleLine(`mutation {
-            updateAutomobileEntityById(input: {automobileEntityPatch: { firstName: "Mandy", lastName: "Darm" }, id: ${id_}}) {
-              automobileEntity{
-                firstName
-              }
-            }
-          }`)
+            query: this.toSingleLine(`mutation updateAutomobiles($automobileInput: AutomobileEntityPatch!){  updateAutomobileEntityById(input: {id: 22, automobileEntityPatch: $automobileInput}){    automobileEntity{     firstName   }  }}`),
+            variables: { automobileInput: automobileEntityPatch }
         }
             ;
 
@@ -136,7 +157,8 @@ export class AutomobileService {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             }
-        }).toPromise().then((data) => console.log(data.data.data));
+        }).toPromise().then((data) =>
+            console.log(data));
 
     }
 

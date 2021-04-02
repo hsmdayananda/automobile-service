@@ -8,15 +8,15 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface AutomobileInput {
-    car_make?: string;
-    car_model?: string;
+    carMake?: string;
+    carModel?: string;
     created?: string;
     email?: string;
-    first_name?: string;
-    last_name?: string;
+    firstName?: string;
+    lastName?: string;
     manufactured_date?: string;
-    age_of_vehicle?: number;
-    vin_number?: string;
+    ageOfVehicle?: number;
+    vinNumber?: string;
 }
 
 export interface Automobile {
@@ -25,11 +25,11 @@ export interface Automobile {
     car_model: string;
     created: string;
     email: string;
-    first_name: string;
-    last_name: string;
-    manufactured_date: string;
-    age_of_vehicle: number;
-    vin_number: string;
+    firstName: string;
+    lastName: string;
+    manufacturedDate: string;
+    ageOfVehicle: number;
+    vinNumber: string;
 }
 
 export interface IQuery {

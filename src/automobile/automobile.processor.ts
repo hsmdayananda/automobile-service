@@ -1,11 +1,13 @@
-import { Process, Processor } from '@nestjs/bull';
+import { Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { AutomobileService } from './automobile.service';
+import { EventsGateway } from '../events.gateway';
+
 
 @Processor('uploader')
 export class AutomobileProcessor {
-    constructor(private automobileService: AutomobileService) { }
+    constructor(private automobileService: AutomobileService, private eventGateway: EventsGateway) { }
     private readonly logger = new Logger(AutomobileProcessor.name);
 
     @Process('transcode')
@@ -14,5 +16,31 @@ export class AutomobileProcessor {
         console.log(' input ==>>>', job.data)
         this.automobileService.bulkUpload(job.data.file);
         this.logger.debug('Transcoding completed');
+    }
+
+    @OnQueueActive({ name: 'transcode' })
+    onActive(job: Job) {
+        console.log(
+            `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
+        );
+    }
+
+
+    @OnQueueCompleted({ name: 'transcode' })
+    async onComplete(job: Job, result: any) {
+        this.eventGateway.server.emit('file', { name: 'File Uploaded' });
+        //this.eventGateway.wss.emit('file', { name: 'Nest' });
+        console.log(
+            `completed job ${job.id} of type ${job.name} with data ${job.data}...}`,
+        );
+
+    }
+
+    @OnQueueFailed()
+    onFail(job: Job) {
+        //this.eventGateway.wss.emit('file-read', 'failed');
+        console.log(
+            `failed  job ${job.id} of type ${job.name} with data ${job.data}...`,
+        );
     }
 }

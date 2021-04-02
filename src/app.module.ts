@@ -6,6 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AutomobileModule } from './automobile/automobile.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { EventsGateway } from './events.gateway'
+//import { EventsModule } from './events/events.module';
+
+
 
 @Module({
   imports: [BullModule.forRoot({

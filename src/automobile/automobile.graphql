@@ -4,11 +4,11 @@ type Automobile {
     car_model: String!
     created: String!
     email: String!
-    first_name: String!
-    last_name: String!
-    manufactured_date: String!
-     age_of_vehicle: Int!
-    vin_number: String!
+    firstName: String!
+    lastName: String!
+    manufacturedDate: String!
+    ageOfVehicle: Int!
+    vinNumber: String!
 }
 
 
@@ -23,14 +23,14 @@ type Mutation {
 }
 
 input AutomobileInput{
-    car_make: String
-    car_model: String
+    carMake: String
+    carModel: String
     created: String
     email: String
-    first_name: String
-    last_name: String
+    firstName: String
+    lastName: String
     manufactured_date: String
-     age_of_vehicle: Int
-    vin_number: String
+     ageOfVehicle: Int
+    vinNumber: String
 }
 

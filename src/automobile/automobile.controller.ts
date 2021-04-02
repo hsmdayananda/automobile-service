@@ -30,7 +30,7 @@ export class AutomobileController {
     @Put('update/:id')
     async update(@Param('id') id: number, @Body() automobileEntity: AutomobileEntity) {
 
-        return await this.automobileService.update(automobileEntity, id);
+        return await this.automobileService.update(id, automobileEntity);
     }
     @Delete('delete/:id')
     async delete(@Param('id') id: number) {

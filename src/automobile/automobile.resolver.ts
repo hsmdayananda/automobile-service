@@ -4,16 +4,17 @@ import { AutomobileEntity } from "./automobile.entity";
 
 
 
+
 @Resolver()
 export class AutomobileResolver {
 
     constructor(private automobileService: AutomobileService) { }
 
-    // @Query()
-    // async automobiles(@Args('page') page: number) {
-    //     console.log('inside resolver')
-    //     return await this.automobileService.showAll(page);
-    // }
+    @Query()
+    async automobiles(@Args('page') page: number) {
+        console.log('inside resolver')
+        return await this.automobileService.readAll(page);
+    }
 
     // @Query()
     // async automobilesSearch(@Args('matchStr') str: string) {
@@ -21,21 +22,20 @@ export class AutomobileResolver {
     //     return await this.automobileService.search(str);
     // }
 
-    // @Mutation('update')
-    // async update(
-    //     @Args('id') id: number,
-    //     @Args('automobileInput') automobile: AutomobileEntity
-    // ) {
-    //     return await this.automobileService.update(id, automobile);
-    // }
+    @Mutation('update')
+    async update(
+        @Args('id') id: number,
+        @Args('automobileInput') automobile: AutomobileEntity
+    ) {
+        return await this.automobileService.update(id, automobile);
+    }
 
-    // @Mutation('delete')
-    // async delete(
-    //     @Args('id') id: number,
-    //     @Args('automobile') automobile: AutomobileEntity
-    // ) {
-    //     return await this.automobileService.delete(id, automobile);
-    // }
+    @Mutation('delete')
+    async delete(
+        @Args('id') id: number
+    ) {
+        return await this.automobileService.delete(id);
+    }
 
 
 }

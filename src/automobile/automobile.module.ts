@@ -9,6 +9,10 @@ import { AutomobileService } from './automobile.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { GpqlMiddleware } from './middlewares/gpql.middleware'
 import { AutomobileResolver } from './automobile.resolver';
+import { EventsGateway } from 'src/events.gateway';
+import { GpqlServerAPI } from './config/gpqlApi.datasource';
+
+
 
 
 @Module({
@@ -19,7 +23,7 @@ import { AutomobileResolver } from './automobile.resolver';
         dest: '../data',
     }), HttpModule],
     controllers: [AutomobileController],
-    providers: [AutomobileProcessor, AutomobileService, AutomobileResolver],
+    providers: [AutomobileProcessor, AutomobileService, AutomobileResolver, EventsGateway, GpqlServerAPI],
 })
 export class AutomobileModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
