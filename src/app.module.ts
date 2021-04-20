@@ -23,7 +23,7 @@ import { EventsGateway } from './events.gateway'
     definitions: {
       path: join(process.cwd(), 'src/graphql.ts'),
     },
-    context: ({ req }) => ({ headers: req.headers }),
+    context: ({ req, res }) => ({ headers: req.headers, res }),
   })],
   controllers: [AppController],
   providers: [AppService],

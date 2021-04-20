@@ -2,11 +2,11 @@ import {
   WebSocketGateway,
   WebSocketServer,
   OnGatewayConnection,
-  SubscribeMessage
 } from '@nestjs/websockets';
 
 import { Logger } from '@nestjs/common';
 import { Server } from 'socket.io';
+//import { Server } from 'ws';
 
 @WebSocketGateway(4001, { transport: ['websocket'] })
 export class EventsGateway implements OnGatewayConnection {
@@ -14,18 +14,18 @@ export class EventsGateway implements OnGatewayConnection {
   //   this.logger.log('Server disconnected');
   // }
   private logger = new Logger('AppGateway');
-  handleConnection(client) {
-    this.logger.log('New client connected');
-    client.emit('connection', 'connection success')
+  handleConnection(client: any) {
+    this.logger.log("Client Connected");
+    client.emit('connections', 'success')
   }
+
+
   @WebSocketServer()
   wss: any;
   @WebSocketServer()
   server: Server;
 
 
-  // afterInit() {
-  //   this.server.emit('file', { do: 'test-file' });
-  // }
+
 
 }

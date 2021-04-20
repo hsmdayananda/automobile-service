@@ -1,20 +1,29 @@
 type Automobile {
     id: Int!
-    car_make: String!
-    car_model: String!
-    created: String!
-    email: String!
-    firstName: String!
-    lastName: String!
-    manufacturedDate: String!
-    ageOfVehicle: Int!
-    vinNumber: String!
+    carMake: String
+    carModel: String
+    created: String
+    email: String
+    firstName: String
+    lastName: String
+    manufacturedDate: String
+    ageOfVehicle: Int
+    vinNumber: String
 }
 
+
+
+input SearchCriteriaInput{
+  filterField: String!
+  operator: String!
+  value: Int! 
+}
 
 type Query {
   automobiles(page: Int): [Automobile!]
   automobilesSearch(matchStr: String!): [Automobile!]
+  automobileById(id: Int!): Automobile
+  automobilesExportDataFeed(searchCriteriaInput: SearchCriteriaInput!): [Automobile]
 }
 
 type Mutation {

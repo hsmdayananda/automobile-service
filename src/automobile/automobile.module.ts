@@ -11,6 +11,7 @@ import { GpqlMiddleware } from './middlewares/gpql.middleware'
 import { AutomobileResolver } from './automobile.resolver';
 import { EventsGateway } from 'src/events.gateway';
 import { GpqlServerAPI } from './config/gpqlApi.datasource';
+import { CsvProcessor } from './csv.processor';
 
 
 
@@ -19,11 +20,13 @@ import { GpqlServerAPI } from './config/gpqlApi.datasource';
     imports: [TypeOrmModule.forFeature([AutomobileEntity]),
     BullModule.registerQueue({
         name: 'uploader',
+    }), BullModule.registerQueue({
+        name: 'csv-processor',
     }), MulterModule.register({
         dest: '../data',
     }), HttpModule],
     controllers: [AutomobileController],
-    providers: [AutomobileProcessor, AutomobileService, AutomobileResolver, EventsGateway, GpqlServerAPI],
+    providers: [AutomobileProcessor, AutomobileService, AutomobileResolver, EventsGateway, GpqlServerAPI, CsvProcessor],
 })
 export class AutomobileModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

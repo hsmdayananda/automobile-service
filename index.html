@@ -11,13 +11,16 @@
 <body>
   <ul id="app"></ul>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
   <script>
     const socket = io('http://localhost:4001');
 
-    socket.on('connection', data => console.log(data));
+
+    socket.on('connections', data => console.log(data));
+
+    socket.on('files', data => console.log(data));
     socket.on('fail', data => console.log(data));
-    socket.on('file', data => console.log(data));
+    socket.on('csv-proc', data => console.log(data));
 
   </script>
 </body>

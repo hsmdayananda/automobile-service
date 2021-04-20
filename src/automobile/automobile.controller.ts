@@ -15,6 +15,7 @@ export class AutomobileController {
     @Post('file')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file: Express.Multer.File) {
+        console.log(' hello file')
         await this.uploadQueue.add('transcode', {
             file: file,
         });

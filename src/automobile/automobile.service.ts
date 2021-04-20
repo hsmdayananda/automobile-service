@@ -7,6 +7,9 @@ import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import { request, gql } from 'graphql-request'
 import { GpqlServerAPI } from "./config/gpqlApi.datasource";
+import { response } from "express";
+import { GraphQLExecutionContext } from "@nestjs/graphql";
+const Json2csvParser = require('json2csv').Parser;
 
 
 
@@ -53,7 +56,7 @@ export class AutomobileService {
 
     }
 
-    async showAll(page: number = 1) {
+    async showAll(page: number) {
         console.log(' hello from service')
         console.log(await getConnection()
             .getRepository(AutomobileEntity)
@@ -86,12 +89,70 @@ export class AutomobileService {
     //     return destroyedUnit;
 
     // }
+    async getAutomobileById(id: number) {
 
-    async readAll(page: number) {
-        console.log(' read all automobiles =====>>>')
+        const query = gql`
+        query {
+            automobileEntityById(id: ${id}){
+              firstName
+              lastName
+              email
+              ageOfVehicle
+              carMake
+              carModel
+            }
+          }
+          
+        `
+
+        let out = await request(this.url, query);
+        console.log(' data ', out.automobileEntityById)
+        return out.automobileEntityById;
+    }
+
+    async filterData(input: any) {
+        console.log(' input filter', input)
+
+        let query = gql`
+            {
+                allAutomobileEntities(
+                  filter:{${input.filterField}: {${input.operator}: ${input.value}}} 
+                ) {
+                  nodes {
+                    ageOfVehicle
+                    carMake
+                    created
+                    email
+                    id
+                    lastName
+                    carModel
+                    firstName
+                    manufacturedDate
+                    vinNumber
+                  }
+                }
+              }
+            `
+
+            ;
+
+
+
+        let out = await request(this.url, query);
+        let data = out.allAutomobileEntities.nodes;
+        let csv = await this.generateCsv(data);
+        // context.getContext().headers('Content-disposition', 'attachment; filename=customers.csv');
+        console.log('csv ', csv)
+        return csv;
+    }
+
+    async readAll(page: number = 1) {
+        console.log(' read all automobiles =====>>>', page)
         let offset: number;
         if (page == 1) {
             offset = 0 * 100
+        } else {
+            offset = 100 * page
         }
         //     const queryTpApi = `
         //     {
@@ -146,7 +207,7 @@ export class AutomobileService {
         console.log('out ====>>>>', automobileEntityPatch);
         //{ firstName: "Mandy", lastName: "Darm" }
         let data = {
-            query: this.toSingleLine(`mutation updateAutomobiles($automobileInput: AutomobileEntityPatch!){  updateAutomobileEntityById(input: {id: 22, automobileEntityPatch: $automobileInput}){    automobileEntity{     firstName   }  }}`),
+            query: this.toSingleLine(`mutation updateAutomobiles($automobileInput: AutomobileEntityPatch!){  updateAutomobileEntityById(input: {id: ${id_}, automobileEntityPatch: $automobileInput}){    automobileEntity{     firstName   }  }}`),
             variables: { automobileInput: automobileEntityPatch }
         }
             ;
@@ -158,7 +219,7 @@ export class AutomobileService {
                 'Accept': 'application/json',
             }
         }).toPromise().then((data) =>
-            console.log(data));
+            console.log(data.data.data.updateAutomobileEntityById));
 
     }
 
@@ -167,15 +228,14 @@ export class AutomobileService {
     }
 
     async delete(id: number) {
-
-        const query = gql`mutation MyMutation {
-    ` +
-            ` deleteAutomobileEntityById(input: { id: ` + id + ` }) {
-        `
-            + `   clientMutationId`
-            + ` deletedAutomobileEntityId
-    }
-} `
+        console.log(' id new', id)
+        const query = gql`mutation  {
+            deleteAutomobileEntityById(input: {id: ${id}}){
+              automobileEntity{
+                id
+              }
+            }
+          }`
 
         return request(this.url, query).then((data) => data.message
         ).catch((e) => {
@@ -185,5 +245,31 @@ export class AutomobileService {
     }
 
 
+    async generateCsv(data: any[]) {
+
+        //Customer.findAll({ attributes: ['id', 'name', 'address', 'age'] }).then(objects => {
+        const jsonCustomers = JSON.parse(JSON.stringify(data));
+        const csvFields = ['Id', 'First Name', 'Last Name'];
+        const json2csvParser = new Json2csvParser({ csvFields });
+        const csvData = json2csvParser.parse(jsonCustomers);
+
+        this.writeToCSVFile(csvData);
+        //return csvData;
+        // res.setHeader('Content-disposition', 'attachment; filename=automobiles.csv');
+        // res.set('Content-Type', 'text/csv');
+        // res.status(200).end(csvData);
+        // });
+    }
+
+    async writeToCSVFile(data: any) {
+        const filename = 'export-data.csv';
+        fs.writeFile(filename, data, err => {
+            if (err) {
+                console.log('Error writing to csv file', err);
+            } else {
+                console.log(`saved as ${filename}`);
+            }
+        });
+    }
 
 }

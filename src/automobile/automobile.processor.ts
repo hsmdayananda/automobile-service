@@ -20,6 +20,7 @@ export class AutomobileProcessor {
 
     @OnQueueActive({ name: 'transcode' })
     onActive(job: Job) {
+        this.eventGateway.wss.emit('files', { name: 'Active' });
         console.log(
             `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
         );
@@ -28,8 +29,7 @@ export class AutomobileProcessor {
 
     @OnQueueCompleted({ name: 'transcode' })
     async onComplete(job: Job, result: any) {
-        this.eventGateway.server.emit('file', { name: 'File Uploaded' });
-        //this.eventGateway.wss.emit('file', { name: 'Nest' });
+        this.eventGateway.wss.emit('files', { name: 'uploaded' });
         console.log(
             `completed job ${job.id} of type ${job.name} with data ${job.data}...}`,
         );
@@ -38,7 +38,7 @@ export class AutomobileProcessor {
 
     @OnQueueFailed()
     onFail(job: Job) {
-        //this.eventGateway.wss.emit('file-read', 'failed');
+        this.eventGateway.wss.emit('file-read', 'failed');
         console.log(
             `failed  job ${job.id} of type ${job.name} with data ${job.data}...`,
         );
