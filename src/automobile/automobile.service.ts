@@ -66,12 +66,34 @@ export class AutomobileService {
         return await this.autoMobileRepo.find({ take: 100, skip: 100 * (page - 1) });
 
     }
-    // async search(str: string) {
-    //     const automobiles = await getConnection().getRepository(AutomobileEntity).find({
-    //         car_model: Like(str + "%")
-    //     });
-    //     return automobiles
-    // }
+    async search(str: string) {
+        console.log(" string value ", str)
+        const query = gql`
+        query {
+            allAutomobileEntities(filter: {carModel: {startsWith: "${str}" }}) {
+                nodes {
+                    ageOfVehicle
+                    carMake
+                    created
+                    email
+                    id
+                    lastName
+                    carModel
+                    firstName
+                    manufacturedDate
+                    vinNumber
+                }
+                totalCount
+            
+              }
+          }
+          
+        `
+
+        let out = await request(this.url, query);
+        console.log(' data ', out.allAutomobileEntities)
+        return out.allAutomobileEntities.nodes;
+    }
     // async update(id: number, automobile: Partial<AutomobileEntity>) {
     //     await this.autoMobileRepo.update(id, { ...automobile })
     //     return await this.autoMobileRepo.findOne({ where: { id } })

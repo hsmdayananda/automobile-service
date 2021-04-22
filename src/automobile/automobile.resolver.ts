@@ -31,11 +31,11 @@ export class AutomobileResolver {
         //return await this.automobileService.filterData(searchCriteriaInput, context);
     }
 
-    // @Query()
-    // async automobilesSearch(@Args('matchStr') str: string) {
-    //     console.log(' string param ', str)
-    //     return await this.automobileService.search(str);
-    // }
+    @Query()
+    async automobilesSearch(@Args('matchStr') str: string) {
+        console.log(' string param ', str)
+        return await this.automobileService.search(str);
+    }
 
     @Mutation('update')
     async update(
