@@ -20,7 +20,7 @@ export interface AutomobileInput {
     email?: string;
     firstName?: string;
     lastName?: string;
-    manufactured_date?: string;
+    manufacturedDate?: string;
     ageOfVehicle?: number;
     vinNumber?: string;
 }

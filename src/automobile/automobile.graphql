@@ -38,8 +38,8 @@ input AutomobileInput{
     email: String
     firstName: String
     lastName: String
-    manufactured_date: String
-     ageOfVehicle: Int
+    manufacturedDate: String
+    ageOfVehicle: Int
     vinNumber: String
 }
 

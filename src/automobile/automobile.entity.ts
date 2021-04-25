@@ -17,8 +17,8 @@ export class AutomobileEntity {
     car_model: string
     @Column("varchar", { length: 50 })
     vin_number: string
-    @Column("varchar", { length: 50 })
-    manufactured_date: string
+    @Column("date")
+    manufactured_date: Date
     @Column("int", { default: 1 })
     age_of_vehicle: number
 

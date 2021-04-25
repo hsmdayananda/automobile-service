@@ -94,6 +94,26 @@ export class AutomobileService {
         console.log(' data ', out.allAutomobileEntities)
         return out.allAutomobileEntities.nodes;
     }
+    myFunction(data: any[]) {
+        let arr: any = [];
+        data.map((el) => {
+            var today = new Date();
+            var birthDate = new Date(el.manufacturedDate);
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            console.log(' hello ', age)
+            el.ageOfVehicle = age;
+            return age;
+        });
+        //arr = arr2;
+        console.log(' arr ', data)
+        return data;
+
+    }
+
     // async update(id: number, automobile: Partial<AutomobileEntity>) {
     //     await this.autoMobileRepo.update(id, { ...automobile })
     //     return await this.autoMobileRepo.findOne({ where: { id } })
@@ -116,12 +136,16 @@ export class AutomobileService {
         const query = gql`
         query {
             automobileEntityById(id: ${id}){
+                id
               firstName
               lastName
               email
               ageOfVehicle
               carMake
               carModel
+              manufacturedDate
+              vinNumber
+              created
             }
           }
           
@@ -217,8 +241,10 @@ export class AutomobileService {
         //await request(this.url, query).then((data) => console.log(data))
         let out = await request(this.url, query);
 
-        console.log(out)
-        return out.allAutomobileEntities.nodes;
+        console.log(out);
+        let data = this.myFunction(out.allAutomobileEntities.nodes);
+        //return out.allAutomobileEntities.nodes;
+        return data;
 
     }
     async update(id_: number, automobileEntityPatch: any) {
