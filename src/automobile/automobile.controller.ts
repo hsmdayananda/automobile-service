@@ -1,50 +1,29 @@
-import { Controller, Post, UploadedFile, Get, UseInterceptors, Put, Delete, Param, Body, Query } from "@nestjs/common";
+import { Controller, Post, UploadedFile, UseInterceptors, Body, HttpCode, BadRequestException } from "@nestjs/common";
 import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
 import { AutomobileService } from "./automobile.service";
-import { AutomobileEntity } from "./automobile.entity";
+
 
 
 @Controller('automobile')
 export class AutomobileController {
 
-    constructor(@InjectQueue('uploader') private readonly uploadQueue: Queue, private automobileService: AutomobileService) { }
+    constructor(private automobileService: AutomobileService) { }
 
-    @Post('file')
+    @Post('file/upload')
     @UseInterceptors(FileInterceptor('file'))
+    @HttpCode(201)
     async uploadFile(@UploadedFile() file: Express.Multer.File) {
-        console.log(' hello file')
-        await this.uploadQueue.add('transcode', {
-            file: file,
-        });
+        if (!this.automobileService.uploadFile(file)) {
+            throw new BadRequestException(" Upload File Fail");
+        }
 
     }
 
-    @Get('read')
-    async readAll(@Query() query) {
+    @Post('file/download')
+    @UseInterceptors(FileInterceptor('file'))
+    async downloadFile(@Body() criteria: any) {
+        this.automobileService.downloadFile(criteria);
 
-        console.log(' query ', query)
-        return await this.automobileService.readAll(query.page);
     }
-    @Put('update/:id')
-    async update(@Param('id') id: number, @Body() automobileEntity: AutomobileEntity) {
-
-        return await this.automobileService.update(id, automobileEntity);
-    }
-    @Delete('delete/:id')
-    async delete(@Param('id') id: number) {
-
-        return await this.automobileService.delete(id);
-    }
-
-
-    @Get('hello')
-    async test() {
-
-        await this.automobileService.showAll(1);
-        console.log(" hello  from server")
-    }
-
 }

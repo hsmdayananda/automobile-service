@@ -1,34 +1,20 @@
-import { Resolver, Args, Query, Mutation, Context, GraphQLExecutionContext } from "@nestjs/graphql";
+import { Resolver, Args, Query, Mutation } from "@nestjs/graphql";
 import { AutomobileService } from "./automobile.service";
 import { AutomobileEntity } from "./automobile.entity";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
-
-
 
 
 @Resolver()
 export class AutomobileResolver {
 
-    constructor(private automobileService: AutomobileService, @InjectQueue('csv-processor') private readonly csvProc: Queue, ) { }
+    constructor(private automobileService: AutomobileService) { }
 
     @Query()
     async automobiles(@Args('page') page: number) {
-        console.log('inside resolver')
         return await this.automobileService.readAll(page);
     }
     @Query()
     async automobileById(@Args('id') id: number) {
-        console.log('inside resolver')
         return await this.automobileService.getAutomobileById(id);
-    }
-
-    @Query()
-    async automobilesExportDataFeed(@Args('searchCriteriaInput') searchCriteriaInput: any, @Context() context: GraphQLExecutionContext) {
-        await this.csvProc.add('csv-proc', {
-            searchCriteriaInput: searchCriteriaInput,
-        });
-        //return await this.automobileService.filterData(searchCriteriaInput, context);
     }
 
     @Query()

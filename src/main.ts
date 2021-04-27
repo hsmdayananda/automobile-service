@@ -13,10 +13,8 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:4200', // angular
-      'http://localhost:3000', // react
-      'http://localhost:8081', // react-native
     ],
-    allowedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers']
+    // allowedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers']
   });
   app.useWebSocketAdapter(new WsAdapter(app));
   Logger.log(`Server Started and running on http://localhost:${port}`)
