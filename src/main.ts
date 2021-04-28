@@ -14,7 +14,6 @@ async function bootstrap() {
     origin: [
       'http://localhost:4200', // angular
     ],
-    // allowedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers']
   });
   app.useWebSocketAdapter(new WsAdapter(app));
   Logger.log(`Server Started and running on http://localhost:${port}`)

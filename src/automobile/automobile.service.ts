@@ -34,10 +34,10 @@ export class AutomobileService {
           
         `
         let out = await request(this.url, query);
-        let data = this.myFunction(out.allAutomobileEntities.nodes);
+        let data = this.calculateAgeOfVehicle(out.allAutomobileEntities.nodes);
         return data;
     }
-    myFunction(data: any[]) {
+    calculateAgeOfVehicle(data: any[]) {
         data.map((el) => {
             var today = new Date();
             var birthDate = new Date(el.manufacturedDate);
@@ -137,7 +137,7 @@ export class AutomobileService {
 
         let out = await request(this.url, query);
 
-        let data = this.myFunction(out.allAutomobileEntities.nodes);
+        let data = this.calculateAgeOfVehicle(out.allAutomobileEntities.nodes);
         return data;
 
     }
@@ -155,7 +155,8 @@ export class AutomobileService {
                 'Accept': 'application/json',
             }
         }).toPromise().then((data) =>
-            console.log(data.data.data.updateAutomobileEntityById));
+            console.log(data.data.data.updateAutomobileEntityById)
+        );
 
     }
 

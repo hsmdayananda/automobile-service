@@ -19,7 +19,6 @@ export class AutomobileResolver {
 
     @Query()
     async automobilesSearch(@Args('matchStr') str: string) {
-        console.log(' string param ', str)
         return await this.automobileService.search(str);
     }
 

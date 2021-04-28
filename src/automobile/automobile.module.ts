@@ -17,10 +17,5 @@ import { GpqlServerAPI } from './config/gpqlApi.datasource';
     controllers: [AutomobileController],
     providers: [AutomobileService, AutomobileResolver, GpqlServerAPI],
 })
-export class AutomobileModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(GpqlMiddleware)
-            .forRoutes('/automobile/view');
-    }
+export class AutomobileModule {
 }

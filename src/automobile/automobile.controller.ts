@@ -21,7 +21,6 @@ export class AutomobileController {
     }
 
     @Post('file/download')
-    @UseInterceptors(FileInterceptor('file'))
     async downloadFile(@Body() criteria: any) {
         this.automobileService.downloadFile(criteria);
 
